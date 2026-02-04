@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>頁面不存在 - resilience.ocf.tw</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <noscript>
+    此網站的 404 轉向功能需要啟用 JavaScript。
+  </noscript>
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; padding: 2rem; line-height: 1.6; }
+    code { background: #f3f3f3; padding: 0.2em 0.4em; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <h1>頁面不存在（404）</h1>
+  <p>正在嘗試將您轉向正確的頁面…</p>
+  <p>如果沒有自動轉向，請回到 <a href="/web">網站韌性檢測專案首頁</a>。</p>
+
+  <script>
+    (function () {
+      // 目前完整 URL
+      var loc = window.location;
+      var origin = loc.origin || (loc.protocol + '//' + loc.host);
+      var path = loc.pathname || '/';
+      var search = loc.search || '';
+      var hash = loc.hash || '';
+
+      // 只處理 /web/... 這種路徑，其餘就留在 404 頁
+      // 例如：/web/foo/bar  ->  /web/?url=foo/bar
+      var prefix = '/web/';
+      if (!path.startsWith(prefix)) {
+        return;
+      }
+
+      // 取出 /web/ 後面的部分當成 {xxx}
+      var rest = path.slice(prefix.length); // 去掉 "/web/"
+
+      // 如果剛好是 /web/ 自己，就不轉向（改交給 /web 的 index 處理）
+      if (rest === '' || rest === '/') {
+        window.location.replace('/web' + search + hash);
+        return;
+      }
+
+      // 把 {xxx} 放到 url 參數裡；同時保留原本的 query string 與 hash（如果有的話）
+      // 若原本就有 query 參數，會變成 ?url=...&原本的參數
+      var params = new URLSearchParams(search.replace(/^\?/, ''));
+      params.set('url', rest);
+
+      var newUrl = origin + '/web/?' + params.toString() + hash;
+      window.location.replace(newUrl);
+    })();
+  </script>
+</body>
+</html>
