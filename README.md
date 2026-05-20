@@ -103,3 +103,11 @@ git push
 - 測試工具與結果產生：`web-resilience-test`
 - 靜態頁面生成與部署：`web-resilience-test-profile`
 - 對外網站容器（本 repo）：`resilience.ocf.tw`
+
+---
+
+## 📜 授權
+
+本網站所呈現之檢測資料與衍生頁面，在 ISIF 研究專案期間（2026 年 12 月 31 日前）採用 [CC BY-NC-ND 4.0 International](https://creativecommons.org/licenses/by-nc-nd/4.0/)（姓名標示─非商業性─禁止改作 4.0 國際）。2026 年 12 月 31 日後將釋出至公有領域（Public Domain）。
+
+完整條款與建議署名格式請見 [LICENSE](LICENSE)。
