@@ -44,6 +44,10 @@
 
       var params = new URLSearchParams(search.replace(/^\?/, ''));
 
+      function stripTrailingSlash(value) {
+        return value.replace(/\/+$/, '');
+      }
+
       // 英文首頁：/web/en → /web/en/
       if (rest === 'en' || rest === 'en/') {
         window.location.replace('/web/en/' + search + hash);
@@ -53,14 +57,14 @@
       // 未知子站英文路徑：/web/{domain}/en → /web/en/?url={domain}
       var enSuffixMatch = rest.match(/^(.+)\/en\/?$/);
       if (enSuffixMatch) {
-        params.set('url', enSuffixMatch[1]);
+        params.set('url', stripTrailingSlash(enSuffixMatch[1]));
         var enUrl = origin + '/web/en/?' + params.toString() + hash;
         window.location.replace(enUrl);
         return;
       }
 
       // 未知子站繁中：/web/{domain} → /web/?url={domain}
-      params.set('url', rest);
+      params.set('url', stripTrailingSlash(rest));
 
       var newUrl = origin + '/web/?' + params.toString() + hash;
       window.location.replace(newUrl);
