@@ -42,9 +42,24 @@
         return;
       }
 
-      // 把 {xxx} 放到 url 參數裡；同時保留原本的 query string 與 hash（如果有的話）
-      // 若原本就有 query 參數，會變成 ?url=...&原本的參數
       var params = new URLSearchParams(search.replace(/^\?/, ''));
+
+      // 英文首頁：/web/en → /web/en/
+      if (rest === 'en' || rest === 'en/') {
+        window.location.replace('/web/en/' + search + hash);
+        return;
+      }
+
+      // 未知子站英文路徑：/web/{domain}/en → /web/en/?url={domain}
+      var enSuffixMatch = rest.match(/^(.+)\/en\/?$/);
+      if (enSuffixMatch) {
+        params.set('url', enSuffixMatch[1]);
+        var enUrl = origin + '/web/en/?' + params.toString() + hash;
+        window.location.replace(enUrl);
+        return;
+      }
+
+      // 未知子站繁中：/web/{domain} → /web/?url={domain}
       params.set('url', rest);
 
       var newUrl = origin + '/web/?' + params.toString() + hash;

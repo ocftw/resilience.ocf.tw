@@ -76,6 +76,7 @@ git push
 發布後建議（詳見 [add-new-sites.zh-TW.md §5](https://github.com/irvin/web-resilience-test-profile/blob/main/add-new-sites.zh-TW.md)）：
 
 - 確認 [GitHub Actions workflow](https://github.com/ocftw/resilience.ocf.tw/actions/workflows/gh-pages.yml) 已完成
+- 依 [TESTING.zh-TW.md](https://github.com/irvin/web-resilience-test-profile/blob/main/TESTING.zh-TW.md) 做回歸測試（含 §3-2 的 `404.html` 行為）
 - 若使用 Cloudflare「cache everything」，可手動 purge `resilience.ocf.tw` hostname
 - 使用者端網站清單可能因 `statistic.tsv` 在瀏覽器 localStorage 快取 **24 小時**而延遲更新（見上游文件 §5-3）
 
