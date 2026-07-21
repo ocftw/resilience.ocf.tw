@@ -86,4 +86,6 @@ git push
 
 本網站所呈現之檢測資料與衍生頁面，在 ISIF 研究專案期間（2026 年 12 月 31 日前）採用 [CC BY-NC-ND 4.0 International](https://creativecommons.org/licenses/by-nc-nd/4.0/)（姓名標示─非商業性─禁止改作 4.0 國際）。2026 年 12 月 31 日後將釋出至公有領域（Public Domain）。
 
-完整條款與建議署名格式請見 [LICENSE](LICENSE)。
+作者為 Irvin Chen（Open Culture Foundation；ORCID：[https://orcid.org/0009-0002-1059-7130](https://orcid.org/0009-0002-1059-7130)），聯絡信箱為 irvin@ocf.tw（請 cc hi@ocf.tw）。
+
+完整條款與建議署名格式請見 [LICENSE](LICENSE)。機器可讀引用資訊見 [`CITATION.cff`](CITATION.cff)。
