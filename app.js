@@ -65,16 +65,22 @@ function initNav() {
   syncNavCurrent();
 }
 
+let allowHashSync = false;
+
 function syncChrome() {
   const intro = document.getElementById('intro');
   const articles = document.getElementById('articles');
   const portals = document.getElementById('portals');
   const compactNav = window.matchMedia('(max-width: 640px)');
   const threshold = window.innerHeight * 0.42;
-  let navKey = compactNav.matches ? 'cover' : 'intro';
-  if (portals && portals.getBoundingClientRect().top < threshold) navKey = 'portals';
-  else if (articles && articles.getBoundingClientRect().top < threshold) navKey = 'articles';
-  else if (intro && intro.getBoundingClientRect().top < threshold) navKey = 'intro';
+  let section = 'cover';
+  if (portals && portals.getBoundingClientRect().top < threshold) section = 'portals';
+  else if (articles && articles.getBoundingClientRect().top < threshold) section = 'articles';
+  else if (intro && intro.getBoundingClientRect().top < threshold) section = 'intro';
+
+  // Desktop 沒有封面導覽項，封面區仍標示「海底電纜是什麼」
+  const navKey = (!compactNav.matches && section === 'cover') ? 'intro' : section;
+
   document.querySelectorAll('.site-nav-links [data-nav]').forEach((link) => {
     const on = link.dataset.nav === navKey;
     link.classList.toggle('is-active', on);
@@ -82,6 +88,21 @@ function syncChrome() {
     else link.removeAttribute('aria-current');
   });
   syncNavCurrent();
+
+  if (!allowHashSync || location.hash.startsWith('#article/')) return;
+  const nextHash = `#${section}`;
+  if (location.hash !== nextHash) {
+    history.replaceState(null, '', `${location.pathname}${location.search}${nextHash}`);
+  }
+}
+
+function scrollToLocationHash() {
+  const raw = location.hash.slice(1);
+  if (!raw || raw.startsWith('article/')) return null;
+  const target = document.getElementById(decodeURIComponent(raw));
+  if (!target) return null;
+  target.scrollIntoView({ block: 'start' });
+  return target;
 }
 
 function initScrollStory() {
@@ -89,7 +110,25 @@ function initScrollStory() {
 
   window.addEventListener('scroll', syncChrome, { passive: true });
   window.addEventListener('resize', syncChrome);
+
+  const bootTarget = scrollToLocationHash();
   syncChrome();
+
+  if (!bootTarget) {
+    allowHashSync = true;
+    syncChrome();
+    return;
+  }
+
+  // 等版面／地圖就緒後再跳一次，然後才開始用捲動位置覆寫 hash
+  requestAnimationFrame(() => {
+    scrollToLocationHash();
+    requestAnimationFrame(() => {
+      scrollToLocationHash();
+      allowHashSync = true;
+      syncChrome();
+    });
+  });
 }
 
 function initSignalJourney() {

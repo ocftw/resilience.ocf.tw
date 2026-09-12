@@ -536,7 +536,27 @@ html.is-cover-preview #cover {
   position: relative;
   z-index: 2;
   scroll-margin-top: var(--header-h);
+  /* 短區塊若只 snap 上緣，上下捲動時容易跟鄰近不滿一屏內容互搶；
+     改由上下緣各設一個 snap 點（::before / ::after）。 */
+  scroll-snap-align: none;
+}
+
+.section-title-block::before,
+.section-title-block::after {
+  content: '';
+  display: block;
+  height: 1px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.section-title-block::before {
   scroll-snap-align: start;
+  scroll-margin-top: var(--header-h);
+}
+
+.section-title-block::after {
+  scroll-snap-align: end;
 }
 
 .section-title-stage {
@@ -965,6 +985,27 @@ html.is-cover-preview #cover {
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
+  scroll-snap-align: none;
+  scroll-margin-top: var(--header-h);
+}
+
+.closing-screen::before,
+.closing-screen::after {
+  content: '';
+  display: block;
+  flex: 0 0 auto;
+  height: 1px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.closing-screen::before {
+  scroll-snap-align: start;
+  scroll-margin-top: var(--header-h);
+}
+
+.closing-screen::after {
+  scroll-snap-align: end;
 }
 
 .portals {
@@ -1411,10 +1452,6 @@ html:has(.article-modal-page) body {
   .site-nav-links a {
     padding: 12px 10px;
     font-size: 15px;
-  }
-
-  .site-nav-links > a[data-nav="cover"] {
-    display: inline-flex;
   }
 }
 
@@ -2015,6 +2052,12 @@ html:has(.article-modal-page) body {
   scroll-snap-align: none;
 }
 
+.article-scene#article-01,
+.article-scene#article-03 {
+  scroll-snap-align: start;
+  scroll-margin-top: var(--header-h);
+}
+
 .article-visual {
   position: absolute;
   inset: 0;
@@ -2464,6 +2507,8 @@ html:has(.article-modal-page) body {
 
   .scene.article-scene {
     --scene-vh: 100 !important;
+    scroll-snap-align: start;
+    scroll-margin-top: var(--header-h);
   }
 
   .panel.signal-panel {
