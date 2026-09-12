@@ -526,8 +526,10 @@ html.is-cover-preview #cover {
 
 .section-title-stage {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 14px;
   padding: 56px 24px 40px;
   background:
     linear-gradient(to bottom, transparent, color-mix(in srgb, var(--cyan) 8%, transparent)),
@@ -545,6 +547,13 @@ html.is-cover-preview #cover {
   line-height: 1.35;
   text-align: center;
   color: var(--navy);
+}
+
+.section-title-stage .portals-lead {
+  margin: 0;
+  max-width: 40em;
+  text-align: center;
+  line-height: 1.65;
 }
 
 /* ── Scenes ── */
@@ -786,23 +795,17 @@ html.is-cover-preview #cover {
   box-shadow: none;
 }
 
-.articles-intro,
-.portals-header {
+.articles-intro {
   max-width: 720px;
   margin: 0 0 56px;
 }
 
-.articles-headline,
-.portals-title {
+.articles-headline {
   font-size: 32px;
   font-weight: 700;
   color: var(--navy);
   line-height: 1.35;
   margin-bottom: 14px;
-}
-
-.portals-title {
-  font-size: 28px;
 }
 
 .articles-lead,
@@ -957,7 +960,7 @@ html.is-cover-preview #cover {
   background:
     radial-gradient(circle at 18% 0%, rgba(40, 164, 203, 0.09), transparent 32%),
     var(--bg-alt);
-  padding: 100px 6% 80px;
+  padding: 0 6% 80px;
   box-shadow: none;
 }
 
@@ -2424,6 +2427,10 @@ html:has(.article-modal-page) body {
 
   .portals-grid-row {
     grid-template-columns: 1fr;
+  }
+
+  .scene.article-scene {
+    --scene-vh: 100 !important;
   }
 
   .panel.signal-panel {
