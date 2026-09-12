@@ -130,6 +130,9 @@ button {
 }
 
 .site-nav-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
   flex-shrink: 0;
   font-size: 16px;
   font-weight: 700;
@@ -137,6 +140,13 @@ button {
   color: var(--navy);
   text-decoration: none;
   white-space: nowrap;
+}
+
+.site-nav-brand-logo {
+  display: block;
+  height: 29px;
+  width: auto;
+  flex-shrink: 0;
 }
 
 .site-nav-brand:hover {
@@ -375,6 +385,28 @@ button {
 
 .cover-lead p {
   margin: 0;
+}
+
+.cover-continue {
+  margin-top: 4px;
+}
+
+.cover-continue a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  color: var(--cyan);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.cover-continue a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.cover-continue i {
+  font-size: 0.9em;
 }
 
 html.is-cover-preview,
@@ -900,11 +932,26 @@ html.is-cover-preview #cover {
 }
 
 .footer-org {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
   font-weight: 700;
   color: var(--navy);
   font-size: 15px;
   text-decoration: none;
   letter-spacing: 0.02em;
+}
+
+.footer-org-logo {
+  display: inline-flex;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.footer-org-logo img {
+  display: block;
+  height: 32px;
+  width: auto;
 }
 
 .footer-right {
