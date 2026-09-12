@@ -17,6 +17,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
 
@@ -27,7 +28,7 @@
         class="visually-hidden">開啟選單</span> <span class="site-nav-burger" aria-hidden="true"></span> </button>
     <nav id="site-nav-menu" class="site-nav-links" aria-label="主要"> <a href="#intro" class="is-active" data-nav="intro"
         aria-current="page"> 海底電纜是什麼 </a><a href="#articles" data-nav="articles"> 數位韌性準備 </a><a href="#portals"
-        data-nav="portals"> 更多海纜知識入口 </a> </nav>
+        data-nav="portals"> 海纜韌性工具 </a> </nav>
   </header>
   <main id="main">
     <section id="cover" class="cover">
@@ -577,37 +578,37 @@
       <section class="portals end-block" id="portals">
         <div class="portals-inner">
           <header class="portals-header">
-            <h2 class="portals-title">更多內容</h2>
-            <p class="portals-lead">與臺灣海纜韌性相關的其他工具：</p>
+            <h2 class="portals-title">海纜韌性工具</h2>
+            <p class="portals-lead">利用數位服務韌性檢測、網站斷網風險分析、海纜動態地圖等開源工具，掌握臺灣海纜與數位服務的韌性現況，並取得台灣海纜最新情報。</p>
           </header>
           <div class="portals-grid"> <a class="portal-card" href="https://srtt.ocf.tw/" target="_blank"
               rel="noopener noreferrer">
               <div class="portal-card-image"><img src="./portal-srtt.png" alt="" loading="lazy"></div>
-              <h3>數位服務韌性檢測工具 SRTT</h3>
-              <p class="portal-card-desc">開放文化基金會（OCF）開發的線上工具，用來檢測數位服務在對外連線受阻（例如海纜中斷、極度壅塞）情境下的韌性。</p>
+              <h3>數位服務 (app) 韌性檢測工具</h3>
+              <p class="portal-card-desc">開放文化基金會（OCF）開發的線上工具，用來檢測 app 使用時的即時跨國連線情形，以暸解在對外連線受阻情境下的服務韌性。</p>
+            </a><a class="portal-card" href="https://resilience.ocf.tw/web/" target="_blank" rel="noopener noreferrer">
+              <div class="portal-card-image"><img src="./portal-resilience.png" alt="" loading="lazy"></div>
+              <h3>海纜斷掉時，網站還會動嗎？</h3>
+              <p class="portal-card-desc">檢測 2,179 個臺灣常用網站：在海纜斷光或極度壅塞時，約 39% 可能打不開、50% 風險偏高，僅 11% 較有韌性。輸入任一網址查看結果。</p>
             </a><a class="portal-card" href="https://smc.peering.tw/" target="_blank" rel="noopener noreferrer">
               <div class="portal-card-image"><img src="./portal-smc.png" alt="" loading="lazy"></div>
               <h3>臺灣海纜動態地圖</h3>
-              <p class="portal-card-desc">互動式地圖即時呈現連接臺灣的海纜系統、登陸點，並收錄歷年斷線事件紀錄。</p>
-            </a><a class="portal-card" href="https://resilience.ocf.tw/web/" target="_blank" rel="noopener noreferrer">
-              <div class="portal-card-image"><img src="./portal-resilience.png" alt="" loading="lazy"></div>
-              <h3>海纜斷掉時，臺灣人常用的網站還會動嗎？</h3>
-              <p class="portal-card-desc">檢測 1,859 個臺灣常用網站：在海纜斷光或極度壅塞時，約 47% 可能打不開、42% 風險偏高，僅 11% 較有韌性。可輸入任一網址查看結果。</p>
+              <p class="portal-card-desc">互動地圖顯示歷史海纜斷線事件，包含海纜系統、登陸點位置及系統資訊，並收錄歷年斷線事件紀錄。</p>
             </a>
             <div class="portals-grid-row">
               <div class="portal-card portal-card--soon">
                 <h3>給公民社會的數位防災包</h3>
-                <p class="portal-card-desc">即將推出</p>
+                <p class="portal-card-desc">網路連線失敗 <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> 請切換手動模式<br>（即將推出）</p>
               </div>
               <div class="portal-card portal-card--social">
-                <h3>台灣海纜動態追蹤頻道「海纜又被鯊魚咬斷了」</h3>
-                <p class="portal-card-desc">即時追蹤臺灣海底電纜狀態與數位韌性議題。</p>
-                <p class="portal-card-social">立即關注：<a href="https://t.me/s/smc_resilience" target="_blank"
-                    rel="noopener noreferrer">Telegram</a>｜<a href="https://www.facebook.com/smc.resilience/"
-                    target="_blank" rel="noopener noreferrer">FB</a>｜<a href="https://www.instagram.com/smc.resilience/"
-                    target="_blank" rel="noopener noreferrer">IG</a>｜<a href="https://www.threads.com/@smc.resilience"
-                    target="_blank" rel="noopener noreferrer">Threads</a>｜<a href="https://g0v.social/@smc_resilience"
-                    target="_blank" rel="noopener noreferrer">Mastodon</a></p>
+                <h3>「海纜又被鯊魚咬斷了」社群情報頻道</h3>
+                <p class="portal-card-desc">臺灣海底電纜情報與相關新聞報導</p>
+                <p class="portal-card-social">立刻追蹤：<a href="https://t.me/s/smc_resilience" target="_blank"
+                    rel="noopener noreferrer"><i class="fa-brands fa-telegram" aria-hidden="true"></i> Telegram</a>｜<a href="https://www.facebook.com/smc.resilience/"
+                    target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook" aria-hidden="true"></i> FB</a>｜<a href="https://www.instagram.com/smc.resilience/"
+                    target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-square-instagram" aria-hidden="true"></i> IG</a>｜<a href="https://www.threads.com/@smc.resilience"
+                    target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-square-threads" aria-hidden="true"></i> Threads</a>｜<a href="https://g0v.social/@smc_resilience"
+                    target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-mastodon" aria-hidden="true"></i> Mastodon</a></p>
               </div>
             </div>
           </div>
