@@ -16,7 +16,7 @@
 | 報導頁   | `articles/`：獨立文章頁；首頁 modal 內容同步於 `index.html` 的 `<template>` |
 | 靜態資源 | `assets/`、`data/`、`images/`（樣式／腳本、地圖 JSON、圖檔）       |
 | 404      | `404.html`：將 `/web/...` 錯誤路徑轉為 `/web/?url=...` 查詢參數        |
-| SEO      | 根目錄 `robots.txt` 指向 `/web/sitemap.xml`                            |
+| SEO      | `robots.txt` 指向入口網 `sitemap.xml` 與 `/web/sitemap.xml`          |
 | 網站檢測 | submodule `web/`（來自 [web-resilience-test-profile](https://github.com/irvin/web-resilience-test-profile) 的 `gh-pages` 分支） |
 
 本 repo **不**執行檢測或靜態頁建置；`/web` 內容更新流程請見 [跨專案上線流程](#跨專案上線流程)。
@@ -30,10 +30,11 @@
 | `/`                  | 網路韌性入口首頁（海纜敘事、報導、工具入口）                      |
 | `/articles/`         | 報導列表                                                          |
 | `/articles/<slug>/`  | 單篇報導                                                          |
+| `/sitemap.xml`       | 入口網 sitemap（首頁與報導）                                      |
 | `/web/`              | 網站韌性檢測：網址搜尋、整體統計圖表                              |
 | `/web/<domain>/`     | 單一網站檢測結果（靜態頁，約 1800+ 網域）                         |
 | `/web/report/`       | 研究方法與彙整報告（來自 `web-resilience-test` 的 `report` 分支） |
-| `/web/sitemap.xml`   | Sitemap                                                           |
+| `/web/sitemap.xml`   | 檢測站 sitemap                                                    |
 
 ---
 
@@ -41,7 +42,7 @@
 
 ```
 resilience.ocf.tw/          ← 本 repo（入口網 + Pages 殼層）
-├── index.html, 404.html, CNAME, robots.txt, favicon.ico, favicon.svg
+├── index.html, 404.html, CNAME, robots.txt, sitemap.xml, favicon.ico, favicon.svg
 ├── assets/                 ← styles.css、app.js、cover-map.js
 ├── data/                   ← 地圖／場景用 JSON
 ├── images/                 ← 首頁與文章用圖檔
