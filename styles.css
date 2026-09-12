@@ -515,6 +515,38 @@ html.is-cover-preview #cover {
   display: none;
 }
 
+
+/* ── Section title blocks ── */
+.section-title-block {
+  position: relative;
+  z-index: 2;
+  scroll-margin-top: var(--header-h);
+  scroll-snap-align: start;
+}
+
+.section-title-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 56px 24px 40px;
+  background:
+    linear-gradient(to bottom, transparent, color-mix(in srgb, var(--cyan) 8%, transparent)),
+    var(--bg);
+  border-top: 1px solid color-mix(in srgb, var(--navy) 18%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--navy) 18%, transparent);
+}
+
+.section-title {
+  margin: 0;
+  max-width: 16em;
+  font-size: clamp(18px, 3vw, 32px);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.35;
+  text-align: center;
+  color: var(--navy);
+}
+
 /* ── Scenes ── */
 .scene {
   height: calc(var(--scene-vh, 100) * 1vh);
@@ -2055,6 +2087,17 @@ html:has(.article-modal-page) body {
   z-index: 6;
   pointer-events: auto;
   user-select: text;
+}
+
+.article-panel--stack {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.article-panel--stack .article-teaser + .article-teaser {
+  padding-top: 28px;
+  border-top: 1px solid color-mix(in srgb, var(--card-border) 85%, transparent);
 }
 
 .article-panel h2 {

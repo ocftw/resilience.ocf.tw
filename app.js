@@ -55,7 +55,7 @@ function initScrollStory() {
 }
 
 function initSignalJourney() {
-  const intro = document.getElementById('intro');
+  const intro = document.getElementById('intro-journey');
   const introStage = intro?.querySelector('.intro-stage');
   const introSvg = introStage?.querySelector('.intro-svg');
   const phone = introSvg?.querySelector('#iphone');
