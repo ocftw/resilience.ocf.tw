@@ -314,28 +314,15 @@ function setSvgPathProgress(path, progress, reverse = false) {
 function viewportEdgePoint(start, target, width, height) {
   const dx = target.x - start.x;
   const dy = target.y - start.y;
-  if (!Number.isFinite(dx) || !Number.isFinite(dy) || (dx === 0 && dy === 0)) {
-    return {
-      x: Math.max(0, Math.min(width, start.x)),
-      y: Math.max(0, Math.min(height, start.y > 1 ? start.y - 1 : start.y + 1)),
-    };
-  }
   const candidates = [];
   if (dx > 0) candidates.push((width - start.x) / dx);
   if (dx < 0) candidates.push((0 - start.x) / dx);
   if (dy > 0) candidates.push((height - start.y) / dy);
   if (dy < 0) candidates.push((0 - start.y) / dy);
-  const positive = candidates.filter((value) => value > 0 && Number.isFinite(value));
-  if (!positive.length) {
-    return {
-      x: Math.max(0, Math.min(width, target.x)),
-      y: Math.max(0, Math.min(height, target.y)),
-    };
-  }
-  const edgeProgress = Math.min(...positive);
+  const progress = Math.min(...candidates.filter((value) => value > 0));
   return {
-    x: start.x + dx * edgeProgress,
-    y: start.y + dy * edgeProgress,
+    x: start.x + dx * progress,
+    y: start.y + dy * progress,
   };
 }
 
@@ -546,8 +533,7 @@ function addOutboundRoutes(map, cableData) {
       const start = Number(path.dataset.routeStart) || 0;
       const end = Number(path.dataset.routeEnd) || 1;
       const localProgress = rangeProgress(progress, start, Math.max(start + 0.001, end));
-      path.style.opacity = localProgress <= 0.001 ? '0' : '1';
-      path.style.visibility = 'visible';
+      path.style.visibility = localProgress <= 0.001 ? 'hidden' : 'visible';
       path.style.strokeDashoffset = (1 - localProgress).toFixed(3);
     }
   };
@@ -921,12 +907,8 @@ async function initNetworkStoryMap() {
       }
 
       landingRoutes.svg.style.opacity = (1 - routeProgress).toFixed(3);
-      try {
-        landingRoutes.setProgress(incomingProgress);
-        outboundRoutes.setProgress(domesticRouteProgress, overseasRouteProgress);
-      } catch {
-        /* Firefox 偶發 path 測量失敗時略過單幀路線更新 */
-      }
+      landingRoutes.setProgress(incomingProgress);
+      outboundRoutes.setProgress(domesticRouteProgress, overseasRouteProgress);
       scene.style.setProperty('--landing-pin-opacity', (1 - landingPinProgress).toFixed(3));
       scene.style.setProperty('--domestic-pin-opacity', destinationPinProgress.toFixed(3));
       scene.style.setProperty('--overseas-pin-opacity', destinationPinProgress.toFixed(3));

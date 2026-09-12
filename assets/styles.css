@@ -2376,23 +2376,22 @@ html:has(.article-modal-page) body {
 
 .network-stage .landing-routes-svg,
 .network-stage .maplibregl-marker {
-  /* Firefox：will-change: opacity 搭配子元素 opacity 變數時偶發整層不繪製 */
-  will-change: auto;
+  will-change: opacity;
 }
 
 .network-stage .network-landing-pin .land-pin-dot,
 .network-stage .network-landing-pin .land-pin-label {
-  opacity: var(--landing-pin-opacity, 1);
+  opacity: var(--landing-pin-opacity);
 }
 
 .network-stage .network-destination-pin--domestic .land-pin-dot,
 .network-stage .network-destination-pin--domestic .land-pin-label {
-  opacity: var(--domestic-pin-opacity, 0);
+  opacity: var(--domestic-pin-opacity);
 }
 
 .network-stage .network-destination-pin--overseas .land-pin-dot,
 .network-stage .network-destination-pin--overseas .land-pin-label {
-  opacity: var(--overseas-pin-opacity, 0);
+  opacity: var(--overseas-pin-opacity);
 }
 
 .network-destination-pin--domestic {
