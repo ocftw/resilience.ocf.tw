@@ -79,7 +79,7 @@ const breathingMaps = new WeakSet();
 
 async function loadCablesData() {
   if (!cablesCache) {
-    cablesCache = await fetch('./cables.json').then((res) => res.json());
+    cablesCache = await fetch('./data/cables.json').then((res) => res.json());
   }
   return cablesCache;
 }
@@ -233,7 +233,7 @@ function initCoverMap() {
 }
 
 async function loadLandings() {
-  const res = await fetch('./landings.json', { cache: 'no-store' });
+  const res = await fetch('./data/landings.json', { cache: 'no-store' });
   if (!res.ok) throw new Error('landings.json missing');
   return res.json();
 }
@@ -625,7 +625,7 @@ function addLandingPins(map, sites, className = 'land-pin') {
 }
 
 async function loadDestinations() {
-  const res = await fetch('./destinations.json', { cache: 'no-store' });
+  const res = await fetch('./data/destinations.json', { cache: 'no-store' });
   if (!res.ok) throw new Error('destinations.json missing');
   return res.json();
 }
@@ -735,7 +735,7 @@ function isLocalDev() {
 
 async function loadTaiwanView() {
   try {
-    const res = await fetch('./taiwan-view.json', { cache: 'no-store' });
+    const res = await fetch('./data/taiwan-view.json', { cache: 'no-store' });
     if (!res.ok) return null;
     const view = await res.json();
     const lng = Number(view.lng);

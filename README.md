@@ -2,7 +2,7 @@
 
 公開網站：[https://resilience.ocf.tw/](https://resilience.ocf.tw/)
 
-本 repo 是 **GitHub Pages 網站殼層**：負責自訂網域、根路徑轉址、404 處理，並透過 submodule 掛載實際網站內容。檢測、建置、研究報告的詳細說明請見下方連結的各上游專案。
+本 repo 是 **GitHub Pages 上的網路韌性入口網**：根路徑為海纜敘事首頁與數位韌性報導；網站韌性檢測結果與研究報告則透過 submodule 掛在 `/web`。檢測、建置、研究報告的詳細說明請見下方連結的各上游專案。
 
 ---
 
@@ -12,32 +12,42 @@
 | -------- | ---------------------------------------------------------------------- |
 | 部署分支 | `gh-pages`（GitHub Pages）                                             |
 | 自訂網域 | `CNAME` → `resilience.ocf.tw`                                         |
-| 根路徑   | `index.html` 轉址至 `/web`                                             |
+| 入口首頁 | `index.html`：海纜故事、報導導讀、工具入口；樣式與互動見 `assets/` |
+| 報導頁   | `articles/`：獨立文章頁；首頁 modal 內容同步於 `index.html` 的 `<template>` |
+| 靜態資源 | `assets/`、`data/`、`images/`（樣式／腳本、地圖 JSON、圖檔）       |
 | 404      | `404.html`：將 `/web/...` 錯誤路徑轉為 `/web/?url=...` 查詢參數        |
-| SEO      | 根目錄 `robots.txt` 指向 sitemap                                       |
-| 網站內容 | submodule `web/`（來自 [web-resilience-test-profile](https://github.com/irvin/web-resilience-test-profile) 的 `gh-pages` 分支） |
+| SEO      | 根目錄 `robots.txt` 指向 `/web/sitemap.xml`                            |
+| 網站檢測 | submodule `web/`（來自 [web-resilience-test-profile](https://github.com/irvin/web-resilience-test-profile) 的 `gh-pages` 分支） |
 
-本 repo **不**執行檢測或靜態頁建置；內容更新流程請見 [跨專案上線流程](#跨專案上線流程)。
+本 repo **不**執行檢測或靜態頁建置；`/web` 內容更新流程請見 [跨專案上線流程](#跨專案上線流程)。
 
 ---
 
 ## 對外 URL 結構
 
-| URL                | 內容                                                              |
-| ------------------ | ----------------------------------------------------------------- |
-| `/`                | 轉址至 `/web`（即 `web/index.html`）                              |
-| `/web/`            | 首頁：網址搜尋、整體統計圖表                                      |
-| `/web/<domain>/`   | 單一網站檢測結果（靜態頁，約 1800+ 網域）                         |
-| `/web/report/`     | 研究方法與彙整報告（來自 `web-resilience-test` 的 `report` 分支） |
-| `/web/sitemap.xml` | Sitemap                                                           |
+| URL                  | 內容                                                              |
+| -------------------- | ----------------------------------------------------------------- |
+| `/`                  | 網路韌性入口首頁（海纜敘事、報導、工具入口）                      |
+| `/articles/`         | 報導列表                                                          |
+| `/articles/<slug>/`  | 單篇報導                                                          |
+| `/web/`              | 網站韌性檢測：網址搜尋、整體統計圖表                              |
+| `/web/<domain>/`     | 單一網站檢測結果（靜態頁，約 1800+ 網域）                         |
+| `/web/report/`       | 研究方法與彙整報告（來自 `web-resilience-test` 的 `report` 分支） |
+| `/web/sitemap.xml`   | Sitemap                                                           |
 
 ---
 
 ## Repo 與 submodule 結構
 
 ```
-resilience.ocf.tw/          ← 本 repo（網站殼層）
-├── index.html, 404.html, CNAME, robots.txt, favicon.ico
+resilience.ocf.tw/          ← 本 repo（入口網 + Pages 殼層）
+├── index.html, 404.html, CNAME, robots.txt, favicon.ico, favicon.svg
+├── assets/                 ← styles.css、app.js、cover-map.js
+├── data/                   ← 地圖／場景用 JSON
+├── images/                 ← 首頁與文章用圖檔
+├── articles/               ← 數位韌性報導
+│   ├── index.html
+│   └── <slug>/index.html
 └── web/                    ← submodule: web-resilience-test-profile @ gh-pages
     ├── index.html, app.js, statistic.*.tsv, sitemap.xml, …
     ├── <domain>/index.html （各站靜態頁）
@@ -53,7 +63,7 @@ resilience.ocf.tw/          ← 本 repo（網站殼層）
 
 ## 跨專案上線流程
 
-從「新增／更新一個網站」到「在 resilience.ocf.tw 看到頁面」的完整步驟，請直接閱讀：
+從「新增／更新一個網站」到「在 resilience.ocf.tw/web 看到頁面」的完整步驟，請直接閱讀：
 
 - **[web-resilience-test-profile/add-new-sites.zh-TW.md](https://github.com/irvin/web-resilience-test-profile/blob/main/add-new-sites.zh-TW.md)**
 - 英文版：[add-new-sites.md](https://github.com/irvin/web-resilience-test-profile/blob/main/add-new-sites.md)
@@ -72,6 +82,8 @@ git push
 ```
 
 > submodule 名稱為 `web-resilience-test-profile`，實際目錄為 `web/`。
+
+入口網（`index.html`、`articles/`、`assets/`、`data/`、`images/` 等）的變更則直接在本 repo 的 `dev` 分支開發，再開 PR 合併至 `gh-pages`。
 
 發布後建議（詳見 [add-new-sites.zh-TW.md §5](https://github.com/irvin/web-resilience-test-profile/blob/main/add-new-sites.zh-TW.md)）：
 

@@ -191,16 +191,16 @@ function initSignalJourney() {
         <ellipse cx="3100" cy="720" rx="84" ry="22"></ellipse>
       </g>
       <text x="1822" y="770" text-anchor="middle" fill="var(--text-dark)" font-size="16" font-weight="700">海纜</text>
-      <image href="./journey-landing-station.png" x="2654" y="588" width="132" height="132" preserveAspectRatio="xMidYMax meet"></image>
+      <image href="./images/journey-landing-station.png" x="2654" y="588" width="132" height="132" preserveAspectRatio="xMidYMax meet"></image>
       <text x="2720" y="752" text-anchor="middle" fill="var(--text-mid)" font-size="16" font-weight="600">海外海纜登陸站</text>
-      <image href="./journey-overseas-server.png" x="3008" y="536" width="184" height="222" preserveAspectRatio="xMidYMax meet"></image>
+      <image href="./images/journey-overseas-server.png" x="3008" y="536" width="184" height="222" preserveAspectRatio="xMidYMax meet"></image>
       <text x="3100" y="764" text-anchor="middle" fill="var(--text-mid)" font-size="16" font-weight="600">海外伺服器</text>
       <text x="780" y="814" text-anchor="middle" fill="var(--text-dark)" font-size="28" font-weight="700" opacity="0.88">台灣</text>
       <text x="2920" y="814" text-anchor="middle" fill="var(--text-dark)" font-size="28" font-weight="700" opacity="0.88">國外</text>
       </g>
       <g class="journey-first-station">
         <ellipse cx="921" cy="708" rx="70" ry="22" fill="var(--illus-ink)" opacity="0.24"></ellipse>
-        <image href="./journey-landing-station.png" x="859" y="588" width="132" height="132" preserveAspectRatio="xMidYMax meet"></image>
+        <image href="./images/journey-landing-station.png" x="859" y="588" width="132" height="132" preserveAspectRatio="xMidYMax meet"></image>
         <text x="925" y="752" text-anchor="middle" fill="var(--text-mid)" font-size="16" font-weight="600">台灣海纜登陸站</text>
       </g>
     </g>`;
@@ -233,7 +233,7 @@ function initSignalJourney() {
   screenshotClip.appendChild(screenshotClipRect);
   introSvg.querySelector('defs')?.appendChild(screenshotClip);
   const screenshot = document.createElementNS('http://www.w3.org/2000/svg', 'image');
-  screenshot.setAttribute('href', './mobile_screenshot.png');
+  screenshot.setAttribute('href', './images/mobile_screenshot.png');
   screenshot.setAttribute('x', '633');
   screenshot.setAttribute('y', '211');
   screenshot.setAttribute('width', '254');
