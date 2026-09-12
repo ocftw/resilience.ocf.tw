@@ -16,6 +16,10 @@ function coverCableColor() {
   return CABLE_COLOR;
 }
 
+function isFirefox() {
+  return typeof navigator !== 'undefined' && /firefox\/\d/i.test(navigator.userAgent);
+}
+
 function restyleBaseMap(map, { useSitePalette = false } = {}) {
   try {
     const inlandWater = ['lake', 'pond', 'reservoir', 'basin', 'river', 'canal', 'ditch', 'stream', 'drain', 'swamp', 'wetland'];
@@ -272,13 +276,29 @@ const DOMESTIC_CABLE_SYSTEMS = new Set([
 function setSvgPathProgress(path, progress, reverse = false) {
   const fullPath = path.dataset.fullPath;
   if (!fullPath) return;
+  const p = clamp01(progress);
   path.setAttribute('d', fullPath);
-  path.style.visibility = progress <= 0.001 ? 'hidden' : 'visible';
-  if (progress <= 0.001 || progress >= 0.999) return;
+  path.style.strokeDasharray = '';
+  path.style.strokeDashoffset = '';
+  path.removeAttribute('pathLength');
+  // 用 opacity 取代 visibility:hidden，避免 Firefox 之後量不到 path 長度
+  path.style.opacity = p <= 0.001 ? '0' : '1';
+  path.style.visibility = 'visible';
+  if (p <= 0.001) return;
+  if (p >= 0.999) return;
 
-  const length = path.getTotalLength();
-  const visibleLength = length * progress;
-  const steps = Math.max(8, Math.ceil(48 * progress));
+  let length = 0;
+  try {
+    // 強制 layout，避免 Firefox 在剛改 opacity 後 getTotalLength() 回 0
+    path.getBBox();
+    length = path.getTotalLength();
+  } catch {
+    return;
+  }
+  if (!Number.isFinite(length) || length < 1) return;
+
+  const visibleLength = length * p;
+  const steps = Math.max(8, Math.ceil(48 * p));
   const points = Array.from({ length: steps + 1 }, (_, index) => {
     const visibleProgress = visibleLength * (index / steps);
     return path.getPointAtLength(reverse ? length - visibleProgress : visibleProgress);
@@ -294,15 +314,28 @@ function setSvgPathProgress(path, progress, reverse = false) {
 function viewportEdgePoint(start, target, width, height) {
   const dx = target.x - start.x;
   const dy = target.y - start.y;
+  if (!Number.isFinite(dx) || !Number.isFinite(dy) || (dx === 0 && dy === 0)) {
+    return {
+      x: Math.max(0, Math.min(width, start.x)),
+      y: Math.max(0, Math.min(height, start.y > 1 ? start.y - 1 : start.y + 1)),
+    };
+  }
   const candidates = [];
   if (dx > 0) candidates.push((width - start.x) / dx);
   if (dx < 0) candidates.push((0 - start.x) / dx);
   if (dy > 0) candidates.push((height - start.y) / dy);
   if (dy < 0) candidates.push((0 - start.y) / dy);
-  const progress = Math.min(...candidates.filter((value) => value > 0));
+  const positive = candidates.filter((value) => value > 0 && Number.isFinite(value));
+  if (!positive.length) {
+    return {
+      x: Math.max(0, Math.min(width, target.x)),
+      y: Math.max(0, Math.min(height, target.y)),
+    };
+  }
+  const edgeProgress = Math.min(...positive);
   return {
-    x: start.x + dx * progress,
-    y: start.y + dy * progress,
+    x: start.x + dx * edgeProgress,
+    y: start.y + dy * edgeProgress,
   };
 }
 
@@ -363,9 +396,11 @@ function addLandingRoutes(map, sites) {
           `</linearGradient>`,
       );
       const d = `M${start.x.toFixed(1)},${start.y.toFixed(1)} C${c1.x.toFixed(1)},${c1.y.toFixed(1)} ${c2.x.toFixed(1)},${c2.y.toFixed(1)} ${end.x.toFixed(1)},${end.y.toFixed(1)}`;
+      const glow = isFirefox()
+        ? ''
+        : `<path class="landing-route-path" data-full-path="${d}" d="${d}" fill="none" stroke="${GOLD_CABLE}" stroke-width="6" stroke-linecap="round" opacity="0.18" filter="url(#${wrap.id}-blur)"></path>`;
       paths.push(
-        `<path class="landing-route-path" data-full-path="${d}" d="${d}" fill="none" stroke="${GOLD_CABLE}" stroke-width="6" stroke-linecap="round" opacity="0.18" filter="url(#${wrap.id}-blur)"></path>` +
-          `<path class="landing-route-path" data-full-path="${d}" d="${d}" fill="none" stroke="url(#${gid})" stroke-width="2.6" stroke-linecap="round"></path>`,
+        `${glow}<path class="landing-route-path" data-full-path="${d}" d="${d}" fill="none" stroke="url(#${gid})" stroke-width="2.6" stroke-linecap="round"></path>`,
       );
     }
     svg.innerHTML =
@@ -511,7 +546,8 @@ function addOutboundRoutes(map, cableData) {
       const start = Number(path.dataset.routeStart) || 0;
       const end = Number(path.dataset.routeEnd) || 1;
       const localProgress = rangeProgress(progress, start, Math.max(start + 0.001, end));
-      path.style.visibility = localProgress <= 0.001 ? 'hidden' : 'visible';
+      path.style.opacity = localProgress <= 0.001 ? '0' : '1';
+      path.style.visibility = 'visible';
       path.style.strokeDashoffset = (1 - localProgress).toFixed(3);
     }
   };
@@ -539,9 +575,11 @@ function addOutboundRoutes(map, cableData) {
       const { routeType } = route;
       const color = routeType === 'domestic' ? DOMESTIC_CABLE : OVERSEAS_CABLE;
       const shared = `data-route-type="${routeType}" data-route-start="${route.start.toFixed(4)}" data-route-end="${route.end.toFixed(4)}" pathLength="1" style="stroke-dasharray:1;stroke-dashoffset:1"`;
+      const glow = isFirefox()
+        ? ''
+        : `<path class="outbound-route-path outbound-route-path--glow" ${shared} d="${d}" fill="none" stroke="${color}" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14" filter="url(#${wrap.id}-outbound-blur)"></path>`;
       paths.push(
-        `<path class="outbound-route-path outbound-route-path--glow" ${shared} d="${d}" fill="none" stroke="${color}" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14" filter="url(#${wrap.id}-outbound-blur)"></path>` +
-          `<path class="outbound-route-path" ${shared} d="${d}" fill="none" stroke="${color}" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"></path>`,
+        `${glow}<path class="outbound-route-path" ${shared} d="${d}" fill="none" stroke="${color}" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"></path>`,
       );
     }
     svg.innerHTML =
@@ -810,6 +848,7 @@ async function initNetworkStoryMap() {
     let landingCamera;
     let globalCamera;
     let raf = 0;
+    let lastJump = { lng: NaN, lat: NaN, zoom: NaN };
 
     const updateCameras = () => {
       map.resize();
@@ -862,23 +901,35 @@ async function initNetworkStoryMap() {
         mix(landingCamera.lng, TAIWAN_ROUTE_ORIGIN[0], zoomProgress),
         mix(landingCamera.lat, TAIWAN_ROUTE_ORIGIN[1], zoomProgress),
       ];
-
-      map.jumpTo({
-        center: [
-          mix(zoomCenter[0], globalCamera.lng, panProgress),
-          mix(zoomCenter[1], globalCamera.lat, panProgress),
-        ],
-        zoom: mix(landingCamera.zoom, globalCamera.zoom, zoomProgress),
-        bearing: 0,
-        pitch: 0,
-      });
+      const nextLng = mix(zoomCenter[0], globalCamera.lng, panProgress);
+      const nextLat = mix(zoomCenter[1], globalCamera.lat, panProgress);
+      const nextZoom = mix(landingCamera.zoom, globalCamera.zoom, zoomProgress);
+      // 減少每幀 jumpTo，降低 Firefox 底圖瓦片來不及合成的色塊
+      if (
+        !Number.isFinite(lastJump.lng)
+        || Math.abs(lastJump.lng - nextLng) > 1e-5
+        || Math.abs(lastJump.lat - nextLat) > 1e-5
+        || Math.abs(lastJump.zoom - nextZoom) > 1e-4
+      ) {
+        map.jumpTo({
+          center: [nextLng, nextLat],
+          zoom: nextZoom,
+          bearing: 0,
+          pitch: 0,
+        });
+        lastJump = { lng: nextLng, lat: nextLat, zoom: nextZoom };
+      }
 
       landingRoutes.svg.style.opacity = (1 - routeProgress).toFixed(3);
-      landingRoutes.setProgress(incomingProgress);
+      try {
+        landingRoutes.setProgress(incomingProgress);
+        outboundRoutes.setProgress(domesticRouteProgress, overseasRouteProgress);
+      } catch {
+        /* Firefox 偶發 path 測量失敗時略過單幀路線更新 */
+      }
       scene.style.setProperty('--landing-pin-opacity', (1 - landingPinProgress).toFixed(3));
       scene.style.setProperty('--domestic-pin-opacity', destinationPinProgress.toFixed(3));
       scene.style.setProperty('--overseas-pin-opacity', destinationPinProgress.toFixed(3));
-      outboundRoutes.setProgress(domesticRouteProgress, overseasRouteProgress);
 
       setPanelState(landingPanel, 1 - landingPanelProgress, -12 * landingPanelProgress);
       setPanelState(globalPanel, globalPanelProgress, 14 * (1 - globalPanelProgress));
