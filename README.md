@@ -16,7 +16,7 @@
 | 報導頁   | `articles/`：獨立文章頁；首頁 modal 內容同步於 `index.html` 的 `<template>` |
 | 靜態資源 | `assets/`、`data/`、`images/`（樣式／腳本、地圖 JSON、圖檔）       |
 | 404      | `404.html`：將 `/web/...` 錯誤路徑轉為 `/web/?url=...` 查詢參數        |
-| SEO      | `robots.txt` 指向入口網 `sitemap.xml` 與 `/web/sitemap.xml`          |
+| SEO      | `robots.txt` 指向入口網 `sitemap.xml` 與 `/web/sitemap.xml`；`_headers` 設定 Cloudflare Pages 快取 |
 | 網站檢測 | submodule `web/`（來自 [web-resilience-test-profile](https://github.com/irvin/web-resilience-test-profile) 的 `gh-pages` 分支） |
 
 本 repo **不**執行檢測或靜態頁建置；`/web` 內容更新流程請見 [跨專案上線流程](#跨專案上線流程)。
@@ -42,7 +42,7 @@
 
 ```
 resilience.ocf.tw/          ← 本 repo（入口網 + Pages 殼層）
-├── index.html, 404.html, CNAME, robots.txt, sitemap.xml, favicon.ico, favicon.svg
+├── index.html, 404.html, CNAME, robots.txt, sitemap.xml, _headers, favicon.ico, favicon.svg
 ├── assets/                 ← styles.css、app.js、cover-map.js
 ├── data/                   ← 地圖／場景用 JSON
 ├── images/                 ← 首頁與文章用圖檔
@@ -90,7 +90,7 @@ git push
 
 - 確認 [GitHub Actions workflow](https://github.com/ocftw/resilience.ocf.tw/actions/workflows/gh-pages.yml) 已完成
 - 依 [TESTING.zh-TW.md](https://github.com/irvin/web-resilience-test-profile/blob/main/TESTING.zh-TW.md) 做回歸測試（含 §3-2 的 `404.html` 行為）
-- 若使用 Cloudflare「cache everything」，可手動 purge `resilience.ocf.tw` hostname
+- 若使用 Cloudflare，部署後可手動 purge `resilience.ocf.tw` hostname（`_headers` 的 `s-maxage` 會讓 edge 留存較久）
 - 使用者端網站清單可能因 `statistic.tsv` 在瀏覽器 localStorage 快取 **24 小時**而延遲更新（見上游文件 §5-3）
 
 ---
