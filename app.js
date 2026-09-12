@@ -1,9 +1,34 @@
+function ensureNavCurrent() {
+  const nav = document.getElementById('site-nav');
+  if (!nav) return null;
+  let current = nav.querySelector('.site-nav-current');
+  if (current) return current;
+  current = document.createElement('span');
+  current.className = 'site-nav-current';
+  current.setAttribute('aria-live', 'polite');
+  const btn = nav.querySelector('.site-nav-toggle');
+  if (btn) nav.insertBefore(current, btn);
+  else nav.appendChild(current);
+  return current;
+}
+
+function syncNavCurrent() {
+  const nav = document.getElementById('site-nav');
+  const current = ensureNavCurrent();
+  if (!nav || !current) return;
+  const active = nav.querySelector('.site-nav-links [data-nav].is-active')
+    || nav.querySelector('.site-nav-links [aria-current="page"]')
+    || nav.querySelector('.site-nav-links [data-nav]');
+  current.textContent = active ? active.textContent.trim() : '';
+}
+
 function initNav() {
   const nav = document.getElementById('site-nav');
   const btn = nav?.querySelector('.site-nav-toggle');
   const label = btn?.querySelector('.visually-hidden');
   if (!nav || !btn) return;
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const compactNav = window.matchMedia('(max-width: 640px)');
 
   const setOpen = (open) => {
     nav.classList.toggle('is-open', open);
@@ -11,8 +36,14 @@ function initNav() {
     if (label) label.textContent = open ? '關閉選單' : '開啟選單';
   };
 
-  btn.addEventListener('click', () => setOpen(!nav.classList.contains('is-open')));
-  nav.querySelectorAll('a').forEach((link) => {
+  nav.addEventListener('click', (event) => {
+    if (!compactNav.matches) return;
+    if (event.target.closest('.site-nav-links')) return;
+    event.preventDefault();
+    setOpen(!nav.classList.contains('is-open'));
+  });
+
+  nav.querySelectorAll('.site-nav-links a').forEach((link) => {
     link.addEventListener('click', () => setOpen(false));
   });
 
@@ -30,20 +61,48 @@ function initNav() {
       });
     });
   });
+
+  syncNavCurrent();
 }
 
+let allowHashSync = false;
+
 function syncChrome() {
+  const intro = document.getElementById('intro');
   const articles = document.getElementById('articles');
   const portals = document.getElementById('portals');
-  let navKey = 'intro';
-  if (portals && portals.getBoundingClientRect().top < window.innerHeight * 0.42) navKey = 'portals';
-  else if (articles && articles.getBoundingClientRect().top < window.innerHeight * 0.42) navKey = 'articles';
+  const compactNav = window.matchMedia('(max-width: 640px)');
+  const threshold = window.innerHeight * 0.42;
+  let section = 'cover';
+  if (portals && portals.getBoundingClientRect().top < threshold) section = 'portals';
+  else if (articles && articles.getBoundingClientRect().top < threshold) section = 'articles';
+  else if (intro && intro.getBoundingClientRect().top < threshold) section = 'intro';
+
+  // Desktop 沒有封面導覽項，封面區仍標示「海底電纜是什麼」
+  const navKey = (!compactNav.matches && section === 'cover') ? 'intro' : section;
+
   document.querySelectorAll('.site-nav-links [data-nav]').forEach((link) => {
     const on = link.dataset.nav === navKey;
     link.classList.toggle('is-active', on);
     if (on) link.setAttribute('aria-current', 'page');
     else link.removeAttribute('aria-current');
   });
+  syncNavCurrent();
+
+  if (!allowHashSync || location.hash.startsWith('#article/')) return;
+  const nextHash = `#${section}`;
+  if (location.hash !== nextHash) {
+    history.replaceState(null, '', `${location.pathname}${location.search}${nextHash}`);
+  }
+}
+
+function scrollToLocationHash() {
+  const raw = location.hash.slice(1);
+  if (!raw || raw.startsWith('article/')) return null;
+  const target = document.getElementById(decodeURIComponent(raw));
+  if (!target) return null;
+  target.scrollIntoView({ block: 'start' });
+  return target;
 }
 
 function initScrollStory() {
@@ -51,7 +110,25 @@ function initScrollStory() {
 
   window.addEventListener('scroll', syncChrome, { passive: true });
   window.addEventListener('resize', syncChrome);
+
+  const bootTarget = scrollToLocationHash();
   syncChrome();
+
+  if (!bootTarget) {
+    allowHashSync = true;
+    syncChrome();
+    return;
+  }
+
+  // 等版面／地圖就緒後再跳一次，然後才開始用捲動位置覆寫 hash
+  requestAnimationFrame(() => {
+    scrollToLocationHash();
+    requestAnimationFrame(() => {
+      scrollToLocationHash();
+      allowHashSync = true;
+      syncChrome();
+    });
+  });
 }
 
 function initSignalJourney() {
@@ -465,6 +542,22 @@ function initArticleModal() {
   });
 
   dialog.querySelector('[data-article-close]')?.addEventListener('click', requestClose);
+
+  // 目錄為靜態錨點；modal 內改 hash 會蓋掉 #article/slug，改為就地捲動
+  content.addEventListener('click', (event) => {
+    const link = event.target.closest('.article-toc a[href^="#"]');
+    if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const raw = decodeURIComponent((link.getAttribute('href') || '').slice(1));
+    if (!raw || raw.startsWith('article/')) return;
+    const target = content.querySelector(`#${CSS.escape(raw)}`);
+    if (!target) return;
+    event.preventDefault();
+    const preferReduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    target.scrollIntoView({
+      behavior: preferReduce ? 'auto' : 'smooth',
+      block: 'start',
+    });
+  });
 
   document.addEventListener('click', (event) => {
     const link = event.target.closest('a[href]');

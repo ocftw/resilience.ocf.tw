@@ -178,6 +178,10 @@ button {
   background: var(--nav-hover);
 }
 
+.site-nav-links > a[data-nav="cover"] {
+  display: none;
+}
+
 .site-nav-ext {
   font-size: 11px;
   opacity: 0.7;
@@ -190,6 +194,17 @@ button {
   align-items: center;
   justify-content: center;
   border-radius: 8px;
+}
+
+.site-nav-current {
+  display: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--navy);
 }
 
 .site-nav-burger,
@@ -521,7 +536,27 @@ html.is-cover-preview #cover {
   position: relative;
   z-index: 2;
   scroll-margin-top: var(--header-h);
+  /* 短區塊若只 snap 上緣，上下捲動時容易跟鄰近不滿一屏內容互搶；
+     改由上下緣各設一個 snap 點（::before / ::after）。 */
+  scroll-snap-align: none;
+}
+
+.section-title-block::before,
+.section-title-block::after {
+  content: '';
+  display: block;
+  height: 1px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.section-title-block::before {
   scroll-snap-align: start;
+  scroll-margin-top: var(--header-h);
+}
+
+.section-title-block::after {
+  scroll-snap-align: end;
 }
 
 .section-title-stage {
@@ -922,7 +957,7 @@ html.is-cover-preview #cover {
 .article-card h3,
 .portal-card h3 {
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--navy);
   line-height: 1.4;
   margin-bottom: 8px;
@@ -950,6 +985,27 @@ html.is-cover-preview #cover {
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
+  scroll-snap-align: none;
+  scroll-margin-top: var(--header-h);
+}
+
+.closing-screen::before,
+.closing-screen::after {
+  content: '';
+  display: block;
+  flex: 0 0 auto;
+  height: 1px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.closing-screen::before {
+  scroll-snap-align: start;
+  scroll-margin-top: var(--header-h);
+}
+
+.closing-screen::after {
+  scroll-snap-align: end;
 }
 
 .portals {
@@ -1240,7 +1296,44 @@ html:has(.article-modal-page) body {
 .article-meta {
   font-size: 13px;
   color: var(--text-dim);
-  margin-bottom: 40px;
+  margin-bottom: 28px;
+}
+
+.article-toc {
+  margin: 0 0 36px;
+  padding: 18px 20px 16px;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+}
+
+.article-toc-title {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--navy);
+}
+
+.article-toc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.article-toc-list a {
+  color: var(--text-mid);
+  text-decoration: none;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.article-toc-list a:hover,
+.article-toc-list a:focus-visible {
+  color: var(--cyan);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .prose {
@@ -1253,6 +1346,7 @@ html:has(.article-modal-page) body {
 .prose h2 {
   font-size: 22px;
   margin: 2em 0 0.6em;
+  scroll-margin-top: calc(var(--header-h) + 16px);
 }
 
 .prose h3 {
@@ -1346,19 +1440,33 @@ html:has(.article-modal-page) body {
   margin: 2em 0;
 }
 
-@media (max-width: 1080px) {
+@media (max-width: 640px) {
   .site-nav {
     padding: 0 14px 0 18px;
+    gap: 10px;
+    cursor: pointer;
   }
 
   .site-nav-brand {
-    font-size: 15px;
+    font-size: 0;
+  }
+
+  .site-nav-current {
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    max-width: min(52vw, calc(100% - 120px));
+    text-align: center;
+    pointer-events: none;
   }
 
   .site-nav-toggle {
     display: flex;
     order: 2;
     margin-left: auto;
+    flex-shrink: 0;
   }
 
   .site-nav-links {
@@ -1385,7 +1493,7 @@ html:has(.article-modal-page) body {
   }
 }
 
-@media (min-width: 1081px) {
+@media (min-width: 641px) {
   .site-nav-links {
     order: 2;
     margin-left: auto;
@@ -1435,7 +1543,7 @@ html:has(.article-modal-page) body {
 
   .cover-lead {
     gap: 10px;
-    font-size: 12.5px;
+    font-size: 13px;
     line-height: 1.65;
   }
 }
@@ -1982,6 +2090,12 @@ html:has(.article-modal-page) body {
   scroll-snap-align: none;
 }
 
+.article-scene#article-01,
+.article-scene#article-03 {
+  scroll-snap-align: start;
+  scroll-margin-top: var(--header-h);
+}
+
 .article-visual {
   position: absolute;
   inset: 0;
@@ -2262,22 +2376,23 @@ html:has(.article-modal-page) body {
 
 .network-stage .landing-routes-svg,
 .network-stage .maplibregl-marker {
-  will-change: opacity;
+  /* Firefox：will-change: opacity 搭配子元素 opacity 變數時偶發整層不繪製 */
+  will-change: auto;
 }
 
 .network-stage .network-landing-pin .land-pin-dot,
 .network-stage .network-landing-pin .land-pin-label {
-  opacity: var(--landing-pin-opacity);
+  opacity: var(--landing-pin-opacity, 1);
 }
 
 .network-stage .network-destination-pin--domestic .land-pin-dot,
 .network-stage .network-destination-pin--domestic .land-pin-label {
-  opacity: var(--domestic-pin-opacity);
+  opacity: var(--domestic-pin-opacity, 0);
 }
 
 .network-stage .network-destination-pin--overseas .land-pin-dot,
 .network-stage .network-destination-pin--overseas .land-pin-label {
-  opacity: var(--overseas-pin-opacity);
+  opacity: var(--overseas-pin-opacity, 0);
 }
 
 .network-destination-pin--domestic {
@@ -2431,6 +2546,8 @@ html:has(.article-modal-page) body {
 
   .scene.article-scene {
     --scene-vh: 100 !important;
+    scroll-snap-align: start;
+    scroll-margin-top: var(--header-h);
   }
 
   .panel.signal-panel {
