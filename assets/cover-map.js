@@ -16,10 +16,6 @@ function coverCableColor() {
   return CABLE_COLOR;
 }
 
-function isFirefox() {
-  return typeof navigator !== 'undefined' && /firefox\/\d/i.test(navigator.userAgent);
-}
-
 function restyleBaseMap(map, { useSitePalette = false } = {}) {
   try {
     const inlandWater = ['lake', 'pond', 'reservoir', 'basin', 'river', 'canal', 'ditch', 'stream', 'drain', 'swamp', 'wetland'];
@@ -383,15 +379,12 @@ function addLandingRoutes(map, sites) {
           `</linearGradient>`,
       );
       const d = `M${start.x.toFixed(1)},${start.y.toFixed(1)} C${c1.x.toFixed(1)},${c1.y.toFixed(1)} ${c2.x.toFixed(1)},${c2.y.toFixed(1)} ${end.x.toFixed(1)},${end.y.toFixed(1)}`;
-      const glow = isFirefox()
-        ? ''
-        : `<path class="landing-route-path" data-full-path="${d}" d="${d}" fill="none" stroke="${GOLD_CABLE}" stroke-width="6" stroke-linecap="round" opacity="0.18" filter="url(#${wrap.id}-blur)"></path>`;
+      // 不使用 feGaussianBlur 光暈：Firefox 易掛，兩邊改為同一套實線描繪
       paths.push(
-        `${glow}<path class="landing-route-path" data-full-path="${d}" d="${d}" fill="none" stroke="url(#${gid})" stroke-width="2.6" stroke-linecap="round"></path>`,
+        `<path class="landing-route-path" data-full-path="${d}" d="${d}" fill="none" stroke="url(#${gid})" stroke-width="2.6" stroke-linecap="round"></path>`,
       );
     }
-    svg.innerHTML =
-      `<defs><filter id="${wrap.id}-blur"><feGaussianBlur stdDeviation="1.6"/></filter>${grads.join('')}</defs>${paths.join('')}`;
+    svg.innerHTML = `<defs>${grads.join('')}</defs>${paths.join('')}`;
     applyProgress();
   };
 
@@ -561,15 +554,11 @@ function addOutboundRoutes(map, cableData) {
       const { routeType } = route;
       const color = routeType === 'domestic' ? DOMESTIC_CABLE : OVERSEAS_CABLE;
       const shared = `data-route-type="${routeType}" data-route-start="${route.start.toFixed(4)}" data-route-end="${route.end.toFixed(4)}" pathLength="1" style="stroke-dasharray:1;stroke-dashoffset:1"`;
-      const glow = isFirefox()
-        ? ''
-        : `<path class="outbound-route-path outbound-route-path--glow" ${shared} d="${d}" fill="none" stroke="${color}" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14" filter="url(#${wrap.id}-outbound-blur)"></path>`;
       paths.push(
-        `${glow}<path class="outbound-route-path" ${shared} d="${d}" fill="none" stroke="${color}" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"></path>`,
+        `<path class="outbound-route-path" ${shared} d="${d}" fill="none" stroke="${color}" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"></path>`,
       );
     }
-    svg.innerHTML =
-      `<defs><filter id="${wrap.id}-outbound-blur"><feGaussianBlur stdDeviation="1.4"/></filter></defs>${paths.join('')}`;
+    svg.innerHTML = paths.join('');
     applyProgress();
   };
 
