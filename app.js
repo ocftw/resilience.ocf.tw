@@ -543,6 +543,22 @@ function initArticleModal() {
 
   dialog.querySelector('[data-article-close]')?.addEventListener('click', requestClose);
 
+  // 目錄為靜態錨點；modal 內改 hash 會蓋掉 #article/slug，改為就地捲動
+  content.addEventListener('click', (event) => {
+    const link = event.target.closest('.article-toc a[href^="#"]');
+    if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const raw = decodeURIComponent((link.getAttribute('href') || '').slice(1));
+    if (!raw || raw.startsWith('article/')) return;
+    const target = content.querySelector(`#${CSS.escape(raw)}`);
+    if (!target) return;
+    event.preventDefault();
+    const preferReduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    target.scrollIntoView({
+      behavior: preferReduce ? 'auto' : 'smooth',
+      block: 'start',
+    });
+  });
+
   document.addEventListener('click', (event) => {
     const link = event.target.closest('a[href]');
     if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
