@@ -178,6 +178,10 @@ button {
   background: var(--nav-hover);
 }
 
+.site-nav-links > a[data-nav="cover"] {
+  display: none;
+}
+
 .site-nav-ext {
   font-size: 11px;
   opacity: 0.7;
@@ -190,6 +194,17 @@ button {
   align-items: center;
   justify-content: center;
   border-radius: 8px;
+}
+
+.site-nav-current {
+  display: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--cyan);
 }
 
 .site-nav-burger,
@@ -1346,19 +1361,33 @@ html:has(.article-modal-page) body {
   margin: 2em 0;
 }
 
-@media (max-width: 1080px) {
+@media (max-width: 640px) {
   .site-nav {
     padding: 0 14px 0 18px;
+    gap: 10px;
+    cursor: pointer;
   }
 
   .site-nav-brand {
-    font-size: 15px;
+    font-size: 0;
+  }
+
+  .site-nav-current {
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    max-width: min(52vw, calc(100% - 120px));
+    text-align: center;
+    pointer-events: none;
   }
 
   .site-nav-toggle {
     display: flex;
     order: 2;
     margin-left: auto;
+    flex-shrink: 0;
   }
 
   .site-nav-links {
@@ -1383,9 +1412,13 @@ html:has(.article-modal-page) body {
     padding: 12px 10px;
     font-size: 15px;
   }
+
+  .site-nav-links > a[data-nav="cover"] {
+    display: inline-flex;
+  }
 }
 
-@media (min-width: 1081px) {
+@media (min-width: 641px) {
   .site-nav-links {
     order: 2;
     margin-left: auto;

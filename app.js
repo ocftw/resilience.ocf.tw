@@ -1,9 +1,34 @@
+function ensureNavCurrent() {
+  const nav = document.getElementById('site-nav');
+  if (!nav) return null;
+  let current = nav.querySelector('.site-nav-current');
+  if (current) return current;
+  current = document.createElement('span');
+  current.className = 'site-nav-current';
+  current.setAttribute('aria-live', 'polite');
+  const btn = nav.querySelector('.site-nav-toggle');
+  if (btn) nav.insertBefore(current, btn);
+  else nav.appendChild(current);
+  return current;
+}
+
+function syncNavCurrent() {
+  const nav = document.getElementById('site-nav');
+  const current = ensureNavCurrent();
+  if (!nav || !current) return;
+  const active = nav.querySelector('.site-nav-links [data-nav].is-active')
+    || nav.querySelector('.site-nav-links [aria-current="page"]')
+    || nav.querySelector('.site-nav-links [data-nav]');
+  current.textContent = active ? active.textContent.trim() : '';
+}
+
 function initNav() {
   const nav = document.getElementById('site-nav');
   const btn = nav?.querySelector('.site-nav-toggle');
   const label = btn?.querySelector('.visually-hidden');
   if (!nav || !btn) return;
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const compactNav = window.matchMedia('(max-width: 640px)');
 
   const setOpen = (open) => {
     nav.classList.toggle('is-open', open);
@@ -11,8 +36,14 @@ function initNav() {
     if (label) label.textContent = open ? '關閉選單' : '開啟選單';
   };
 
-  btn.addEventListener('click', () => setOpen(!nav.classList.contains('is-open')));
-  nav.querySelectorAll('a').forEach((link) => {
+  nav.addEventListener('click', (event) => {
+    if (!compactNav.matches) return;
+    if (event.target.closest('.site-nav-links')) return;
+    event.preventDefault();
+    setOpen(!nav.classList.contains('is-open'));
+  });
+
+  nav.querySelectorAll('.site-nav-links a').forEach((link) => {
     link.addEventListener('click', () => setOpen(false));
   });
 
@@ -30,20 +61,27 @@ function initNav() {
       });
     });
   });
+
+  syncNavCurrent();
 }
 
 function syncChrome() {
+  const intro = document.getElementById('intro');
   const articles = document.getElementById('articles');
   const portals = document.getElementById('portals');
-  let navKey = 'intro';
-  if (portals && portals.getBoundingClientRect().top < window.innerHeight * 0.42) navKey = 'portals';
-  else if (articles && articles.getBoundingClientRect().top < window.innerHeight * 0.42) navKey = 'articles';
+  const compactNav = window.matchMedia('(max-width: 640px)');
+  const threshold = window.innerHeight * 0.42;
+  let navKey = compactNav.matches ? 'cover' : 'intro';
+  if (portals && portals.getBoundingClientRect().top < threshold) navKey = 'portals';
+  else if (articles && articles.getBoundingClientRect().top < threshold) navKey = 'articles';
+  else if (intro && intro.getBoundingClientRect().top < threshold) navKey = 'intro';
   document.querySelectorAll('.site-nav-links [data-nav]').forEach((link) => {
     const on = link.dataset.nav === navKey;
     link.classList.toggle('is-active', on);
     if (on) link.setAttribute('aria-current', 'page');
     else link.removeAttribute('aria-current');
   });
+  syncNavCurrent();
 }
 
 function initScrollStory() {
