@@ -34,6 +34,7 @@
 | `/web/`              | 網站韌性檢測：網址搜尋、整體統計圖表                              |
 | `/web/<domain>/`     | 單一網站檢測結果（靜態頁，約 1800+ 網域）                         |
 | `/web/report/`       | 研究方法與彙整報告（來自 `web-resilience-test` 的 `report` 分支） |
+| `/web/report/papers/aintec2026-full-paper.pdf` | 完整英文論文公開版（Irvin Chen／Open Culture Foundation） |
 | `/web/sitemap.xml`   | 檢測站 sitemap                                                    |
 
 ---
